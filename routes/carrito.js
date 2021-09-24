@@ -1,79 +1,81 @@
-const express= require('express');
-const routerCarrito = express.Router();
-const esAdmin = require('../middleware/checkAdmin');
-const listado = require ('../persistencia/Carrito');
-const listProd = require ('../persistencia/Archivo');
+const express = require("express");
+const router = express.Router();
 
+const CarritoRepositorio = require("../repository/carrito-repositorio");
 
-routerCarrito.get('/to-list/:id?',async (req,res)=>{
-    try{
-        if(!req.params.id){
-            let content = await listado.read();
-            if (content.length==0){
-                throw new Error('There are not products uploaded')
-            }
-            res.json (content);
-        }else{
-            let content = await listado.search(req.params.id);
-            if (content.length==0){
-                throw new Error('Product not found');
-            }
-            res.json(content);
-        }
-        
-    } catch(e){
-        res.status(404).json ({"error": e.message});
+const Carrito = require("../api/carrito");
+const Producto = require("../api/producto");
+
+let carritos;
+
+const cargarCarritos = async () => {
+  carritos = await CarritoRepositorio.getCarritos();
+};
+
+cargarCarritos();
+
+router.get("/listar", async (req, res) => {
+  return res.json(carritos);
+});
+
+router.get("/listar/:id", (req, res) => {
+  try {
+    return res.json(carritos.filter((p) => String(p.id) === req.params.id));
+  } catch (err) {
+    return res.status(400).json({ message: err.message });
+  }
+});
+
+router.post("/guardar/:id", (req, res) => {
+  try {
+    const producto = getProducto(Number(req.params.id), req.body.producto);
+
+    const carrito = new Carrito(
+      carritos.length + 1,
+      Date.now().toLocaleString("es-AR"),
+      producto
+    );
+
+    carritos.push(carrito);
+
+    CarritoRepositorio.guardar(carritos);
+
+    return res.status(200).json({ message: "carrito guardado" });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+});
+
+router.delete("/borrar/:id", (req, res) => {
+  try {
+    const index = carritos.findIndex((p) => String(p.id) === req.params.id);
+    if (index < 0) {
+      return res.status(400).json({ message: "El carrito no éxiste" });
     }
-})
 
-routerCarrito.post('/add/:id_product',esAdmin, async (req,res)=>{
+    carritos.splice(index, 1);
 
-    try{
+    CarritoRepositorio.guardar(carritos);
 
-        let prod = await listProd.search(req.params.id_producto);
+    return res.status(200).json({ message: "carrito borrado" });
+  } catch (err) {
+    return res.status(400).json({ message: err.message });
+  }
+});
 
-        if (prod.length == 0){
-            throw new Error('Product not found');
-        }
+const getProducto = (id, producto) => {
+  const obj = new Producto(
+    id,
+    Date.now().toLocaleString("es-AR"),
+    producto.nombre,
+    producto.descripcion,
+    producto.codigo,
+    producto.foto,
+    producto.precio,
+    producto.stock
+  );
 
-        let d=new Date();
+  return obj;
+};
 
-        let month = d.getMonth();
-
-        month = month + 1;
-
-        let date = d.getDate() + "/" + month + "/" + d.getFullYear() +" " + d.getHours()+":" + d.getMinutes() + ":" + d.getSeconds();      
-    
-        let productoGuardar={
-            "timestamp":date,
-            "producto":prod
-        };
-
-        let resultado = await listado.save(productoGuardar);
-        if (resultado.length==0){
-            throw new Error("Error saving file");
-        }
-        res.json(resultado);
-    }catch(e){
-        res.status(404).json({"error": e.message});
-    }
-})
-
-
- routerCarrito.delete('/delete/:id',esAdmin, async (req,res)=>{
-    try{
-        let deleted= await listado.deleteProduct(req.params.id);
-        if (deleted == "There are no products on database" || deleted == "Element not found"){
-            throw new Error(deleted)
-        }
-        if (deleted.length == 0){
-            throw new Error("Error deleting product")
-        }
-        res.json(deleted);
-    }catch(e){
-        res.status(404).json({"error": e.message});
-    }    
-})
-
-
-module.exports = routerCarrito;
+module.exports = router;

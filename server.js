@@ -1,39 +1,23 @@
-const express= require('express');
-
-const app= express();
-
-const cors= require('cors');
-
-app.use(cors());
-
+const express = require('express');
 require('dotenv').config();
+
+const app = express();
 
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
-const rutasProductos=require('./routes/productos');
+const rutaProductos = require('./routes/productos');
+const rutaCarrito = require('./routes/carrito');
 
-const rutasCarrito=require('./routes/carrito');
+const PORT = 8080;
 
-const port= process.env.PORT? process.env.PORT:8080;
+app.use('/productos', rutaProductos);
 
-app.use('/productos',rutasProductos);
+app.use('/carrito', rutaCarrito);
 
-app.use('/carrito',rutasCarrito);
-
-if (process.env.NODE_ENV==="prod"){
-    app.use(express.static(__dirname+'/public/build'));
-    app.get('/',(req,res)=>{
-        res.sendFile(__dirname+'/public/build/'+'index.html')
-    })
-    app.get('*',(req,res)=>{
-        res.sendFile(__dirname+'/public/build/'+'index.html')
-    })
-}
-
-app.listen(port,()=>{
-    console.log(`Server running on http://localhost:${port}`);
+app.listen(PORT, ()=>{
+    console.log(`Server running on http://localhost:${PORT}`);
 });
 
 app.use((req, res) => {

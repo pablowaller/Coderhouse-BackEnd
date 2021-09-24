@@ -1,112 +1,106 @@
-const express = require('express');
-const routerProductos = express.Router();
-const esAdmin = require('../middleware/checkAdmin');
-const listado = require('../persistence/archivo');
+const express = require("express");
+const router = express.Router();
 
-routerProductos.get('/to-list/:id?', async (req, res) => {
+const ProductoRepositorio = require("../repository/producto-repositorio");
+const Producto = require("../api/producto");
 
-    try {
-        if (!req.params.id) {
-            let contenido = await listado.read();
-            if (contenido.length == 0) {
-                throw new Error('There is no products uploaded')
-            }
-            res.json(contenido);
-        } else {
-            let contenido = await listado.search(req.params.id);
-            if (contenido.length == 0) {
-                throw new Error('Product not found');
-            }
-            res.json(contenido);
-        }
+let productos;
 
-    } catch (e) {
-        res.status(404).json({ "error": e.monthsage });
+const cargarProductos = async () => {
+  productos = await ProductoRepositorio.getProductos();
+};
+
+cargarProductos();
+
+router.use(function (req, res, next) {
+  if (req.url.includes("listar")) {
+    return next();
+  }
+
+  if (req.headers["administrador"] === "false") {
+    return res.status(401).json({ error: "-1", descripcion: "Unauthorized" });
+  }
+
+  next();
+});
+
+router.get("/listar", async (req, res) => {
+  return res.json(productos);
+});
+
+router.get("/listar/:id", (req, res) => {
+  try {
+    return res.json(productos.filter((p) => String(p.id) === req.params.id));
+  } catch (err) {
+    return res.status(400).json({ message: err.message });
+  }
+});
+
+router.post("/guardar", (req, res) => {
+  try {
+    productos.push(getProducto(req.body));
+
+    ProductoRepositorio.guardar(productos);
+
+    return res.status(200).json({ message: "producto guardado" });
+  } catch (err) {
+    return res.status(400).json({ message: err.message });
+  }
+});
+
+router.put("/actualizar/:id", (req, res) => {
+  try {
+    const index = productos.findIndex((p) => String(p.id) === req.params.id);
+    if (index < 0) {
+      return res.status(400).json({ message: "El producto no éxiste" });
     }
-})
 
-routerProductos.post('/add', esAdmin, async (req, res) => {
+    let producto = getProducto(req.body, req.params.id);
 
-    try {
-        if (!req.body.nombre || !req.body.descripcion || !req.body.codigo || !req.body.foto
-            || !req.body.precio || !req.body.stock) {
-            throw new Error("You must complete all the inputs")
-        }
+    productos[index] = producto;
 
-        let d = new Date();
-        let month = d.getMonth();
-        month = month + 1;
-        let date = d.getDate() + "/" + month + "/" + d.getFullYear() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+    ProductoRepositorio.guardar(productos);
 
-        let productoGuardar = {
-            "timestamp": date,
-            "nombre": req.body.nombre,
-            "descripcion": req.body.descripcion,
-            "codigo": req.body.codigo,
-            "foto": req.body.foto,
-            "precio": req.body.precio,
-            "stock": req.body.stock
-        };
+    return res.status(200).json({ message: "Producto actualizado" });
+  } catch (err) {
+    return res.status(400).json({ message: err.message });
+  }
+});
 
-        let resultado = await listado.save(productoGuardar);
-
-        if (resultado.length == 0) {
-            throw new Error("Error saving the file");
-        }
-        res.json(resultado);
-    } catch (e) {
-        res.status(404).json({ "error": e.monthsage });
+router.delete("/borrar/:id", (req, res) => {
+  try {
+    const index = productos.findIndex((p) => String(p.id) === req.params.id);
+    if (index < 0) {
+      return res.status(400).json({ message: "El producto no existe" });
     }
-})
+    productos.splice(index, 1);
 
-routerProductos.put('/update/:id', esAdmin, async (req, res) => {
-    try {
-        let producto = await listado.search(req.params.id);
-        if (producto.length == 0) {
-            throw new Error("The product you are looking for does not exist");
-        }
-        let d = new Date();
-        let month = d.getMonth();
-        month = month + 1;
-        let date = d.getDate() + "/" + month + "/" + d.getFullYear() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+    ProductoRepositorio.guardar(productos);
 
-        let productoaModificar = {
-            "timestamp": date,
-            "nombre": req.body.nombre,
-            "descripcion": req.body.descripcion,
-            "codigo": req.body.codigo,
-            "foto": req.body.foto,
-            "precio": req.body.precio,
-            "stock": req.body.stock,
-            "id": req.params.id
-        }
-        let productoModificado = await listado.modify(productoaModificar);
-        if (productoModificado.length == 0) {
-            throw new Error("An error occurred while modifying the product");
-        } else {
-            res.json(productoModificado);
-        }
+    return res.status(200).json({ message: "producto borrado" });
+  } catch (err) {
+    return res.status(400).json({ message: err.message });
+  }
+});
 
-    } catch (e) {
-        res.status(404).send({ "error": e.monthsage });
-    }
-})
+const getProducto = (body, id = null) => {
 
-routerProductos.delete('/delete/:id', esAdmin, async (req, res) => {
-    try {
-        let deleted = await listado.deleteProduct(req.params.id);
+  if (!id) {
+    id = productos.length + 1;
+  }
 
-        if (deleted == "There are not products on database" || deleted == "Element not found") {
-            throw new Error(deleted)
-        }
-        if (deleted.length == 0) {
-            throw new Error("Error deleting product")
-        }
-        res.json(deleted);
-    } catch (e) {
-        res.status(404).json({ "error": e.monthsage });
-    }
-})
+  const producto = new Producto(
+    id,
+    Date.now().toLocaleString("es-AR"),
+    body.nombre,
+    body.descripcion,
+    body.codigo,
+    body.foto,
+    body.precio,
+    body.stock
+  );
 
+  return producto;
+};
 
-module.exports = routerProductos;
+module.exports = router;
