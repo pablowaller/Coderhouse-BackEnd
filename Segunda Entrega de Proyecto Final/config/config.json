@@ -1,0 +1,6 @@
+{
+  "PORT": 8080,
+  "DB": 0,
+  "MONGO_URL": "",
+  "MONGO_ATLAS": ""
+}

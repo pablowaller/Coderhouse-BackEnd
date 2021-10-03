@@ -1,0 +1,33 @@
+{
+  "name": "proyecto_final_2",
+  "version": "1.0.0",
+  "description": "Segunda entrega del proyecto final",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agustinyuse/proyecto_final_2.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/agustinyuse/proyecto_final_2/issues"
+  },
+  "homepage": "https://github.com/agustinyuse/proyecto_final_2#readme",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "firebase-admin": "^9.12.0",
+    "knex": "^0.95.6",
+    "mongoose": "^5.13.9",
+    "mysql": "^2.18.1"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  }
+}

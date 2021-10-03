@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='initial-scale=1.0'>
+    <title>Chat con Websockets</title>
+    <script src='/socket.io/socket.io.js'></script>
+</head>
+<header>
+    <h1>Chat con Websockets</h1>
+</header>
+
+<body>
+    <div>
+        <label for='author'>Autor</label>
+        <input type='text' name='author' id='author'>
+        <label for='message'>Mensaje</label>
+        <input type='text' name='message' id='message'>
+        <button id='send'>ENVIAR</button>
+
+    </div>
+
+    <div id='mensajes'>
+
+    </div>
+
+    <script>
+
+        const socket = io()
+
+        const message = document.getElementById('message')
+        const author = document.getElementById('author')
+
+        const send = document.getElementById('send')
+
+        send.addEventListener('click', () => {
+            socket.emit('message', {
+                message: message.value,
+                author: author.value
+            })
+        })
+
+        socket.on('connectionMessage', (data) => {
+            console.log(data)
+        })
+
+        socket.on('message', (data) => {
+
+            mensajes.innerHTML += `
+                <ul>
+                    <li> De: ${data.author} </li>
+                    <li> Mensaje: ${data.message} </li>
+                </ul>
+                `
+        })
+    </script>
+</body>
+
+</html>
