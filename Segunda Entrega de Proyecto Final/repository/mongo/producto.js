@@ -35,10 +35,6 @@ class Producto {
         conditions["nombre"] = params.nombre;
       }
 
-      if (params.codigo) {
-        conditions["codigo"] = params.codigo;
-      }
-
       if (params.startPrecio && params.endPrecio) {
         let range = {};
 

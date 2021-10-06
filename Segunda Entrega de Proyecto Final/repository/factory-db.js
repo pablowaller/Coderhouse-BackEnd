@@ -13,19 +13,23 @@ class RepositoryFactoryDb {
 
       if (config.DB === 1 || config.DB === 2) {
         module = require(`../repository/mongo/${entitie}`);
-
         return module;
       }
 
-      if (config.DB === 3) {
+      else if (config.DB === 3) {
         module = require(`../repository/mysql/${entitie}`);
+        return module;
+      }
 
+      else if (config.DB === 4) {
+        module = require(`../repository/firebase/${entitie}`);
         return module;
       }
 
       module = require(`../repository/memoria/${entitie}`);
-
+      
       return module;
+
     } catch (error) {
       console.log(error);
     }

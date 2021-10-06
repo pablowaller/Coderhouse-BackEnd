@@ -5,12 +5,12 @@ class CarritoController {
     this.repository = factoryDB.getRepository("carrito");
   }
 
-  create = (entitie) => {
-    this.repository.create(entitie);
+  create = (producto) => {
+    this.repository.create(producto);
   };
 
-  update = (id, entitie) => {
-    this.repository.update(id, entitie);
+  update = (id, producto) => {
+    this.repository.update(id, producto);
   };
 
   delete = (id) => {

@@ -3,17 +3,17 @@ const carritoModel = require("../../models/carrito");
 class Carrito {
   constructor() {}
 
-  create = async (entitie) => {
+  create = async (producto) => {
     try {
-      return await carritoModel.create(entitie);
+      return await carritoModel.create(producto);
     } catch (err) {
       console.error(err.message);
     }
   };
 
-  update = async (id, entitie) => {
+  update = async (id, producto) => {
     try {
-      return await carritoModel.findByIdAndUpdate(id, entitie);
+      return await carritoModel.findByIdAndUpdate(id, producto);
     } catch (err) {
       console.error(err.message);
     }

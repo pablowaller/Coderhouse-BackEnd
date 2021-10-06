@@ -35,10 +35,6 @@ class Producto {
       objs = objs.filter((p) => p.nombre === params.nombre);
     }
 
-    if (params.codigo) {
-      objs = objs.filter((p) => p.codigo === params.codigo);
-    }
-
     if (
       params.startPrecio &&
       params.endPrecio &&

@@ -17,7 +17,6 @@ class Carrito {
             table.timestamp("timestamp_carrito").defaultTo(knex.fn.now());
             table.string("nombre");
             table.string("descripcion");
-            table.string("codigo");
             table.integer("precio");
             table.integer("stock");
             table.string("foto");
@@ -63,7 +62,6 @@ class Carrito {
         .update(
           { nombre: producto.nombre },
           { descripcion: producto.descripcion },
-          { codigo: producto.codigo },
           { precio: producto.precio },
           { stock: producto.stock },
           { foto: producto.foto }
