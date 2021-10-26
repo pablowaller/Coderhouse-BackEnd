@@ -2,7 +2,7 @@ const express = require("express");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const User = require("./models/user");
-
+const numCPUs = require("os").cpus().length;
 const passport = require("passport");
 const bcrypt = require("bCrypt");
 const FacebookStrategy = require("passport-facebook").Strategy;
@@ -33,8 +33,9 @@ app.use(
   })
 );
 
-const FACEBOOK_CLIENT_ID = process.env.FACEBOOK_CLIENT_ID;
-const FACEBOOK_CLIENT_SECRET = process.env.FACEBOOK_CLIENT_SECRET;
+const FACEBOOK_CLIENT_ID = process.argv[3] || process.env.FACEBOOK_CLIENT_ID;
+const FACEBOOK_CLIENT_SECRET =
+  process.argv[4] || process.env.FACEBOOK_CLIENT_SECRET;
 
 passport.use(
   new FacebookStrategy(
@@ -212,7 +213,7 @@ app.post(
   "/login",
   passport.authenticate("login", {
     failureRedirect: "/faillogin",
-    successRedirect: "/views/productos/vista",
+    successRedirect: "/views/vista",
   })
 );
 
@@ -222,7 +223,7 @@ app.get(
   "/auth/facebook/callback",
   passport.authenticate("facebook", {
     failureRedirect: "/faillogin",
-    successRedirect: "/views/productos/vista",
+    successRedirect: "/views/vista",
   })
 );
 app.get("/faillogin");
@@ -232,10 +233,27 @@ app.post(
   "/signup",
   passport.authenticate("signup", {
     failureRedirect: "/failsignup",
-    successRedirect: "/views/productos/vista",
+    successRedirect: "/views/vista",
   })
 );
 app.get("/failsignup");
+
+app.get("/info");
+
+app.get("/info", (req, res) => {
+  const info = {
+    argv: `${process.argv[2]}`,
+    so: `${process.platform}`,
+    version: `${process.version}`,
+    memoryUsage: `${process.memoryUsage}`,
+    path: `${process.cwd()}`,
+    processId: `${process.pid}`,
+    folder: `${process.cwd()}`,
+    numberProcess: numCPUs,
+  };
+
+  res.json(info);
+});
 
 app.get("/getUser", async (req, res) => {
   const userDB = await User.findById(req.user.id);
@@ -264,16 +282,19 @@ app.get("/logout", (req, res) => {
 });
 
 const productsRouter = require("./routes/products.routes");
-app.use("/productos", productsRouter, auth);
+app.use("/productos", productsRouter);
 
 const messagesRouter = require("./routes/messages.routes");
 app.use("/mensajes", messagesRouter);
+
+const randomsRouter = require("./routes/randoms.routes");
+app.use("/random", randomsRouter);
 
 io.on("connect", (socket) => {
   console.log("Usuario Conectado");
 });
 
-const PORT = 8080;
+const PORT = parseInt(process.argv[2]) || 8080;
 
 controllersdb.conectarDB(process.env.MONGO_ATLAS, (err) => {
   if (err) return console.log("Error en conexión de base de datos", err);
@@ -281,8 +302,6 @@ controllersdb.conectarDB(process.env.MONGO_ATLAS, (err) => {
 
   http.listen(PORT, function (err) {
     if (err) return console.log("Error en el listen server", err);
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running on ${PORT} ${process.pid}`);
   });
 });
-
-

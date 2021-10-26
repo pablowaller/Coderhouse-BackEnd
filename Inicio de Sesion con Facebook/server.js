@@ -264,7 +264,7 @@ app.get("/logout", (req, res) => {
 });
 
 const productsRouter = require("./routes/products.routes");
-app.use("/productos", productsRouter, auth);
+app.use("/productos", productsRouter);
 
 const messagesRouter = require("./routes/messages.routes");
 app.use("/mensajes", messagesRouter);
