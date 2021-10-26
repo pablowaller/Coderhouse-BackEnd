@@ -10,11 +10,11 @@
       integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l"
       crossorigin="anonymous"
     />
-    <title>Document</title>
+    <title>Login</title>
   </head>
   <body>
     <div class="mb-3 w-25 m-auto p-5" style="background-color: #80808038">
-      <form action="/login" method="POST">
+      <form id="login">
         <h2>Login del usuario</h2>
 
         <label for="exampleFormControlInput1" class="form-label"
@@ -27,28 +27,10 @@
           name="username"
           required
         />
-        <label for="exampleFormControlInput1" class="form-label"
-          >Ingrese su contraseña</label
-        >
-        <input
-          type="password"
-          class="form-control"
-          id="password"
-          name="password"
-          required
-        />
-        <button type="submit" class="btn btn-success mt-5">Login</button>
+        <button type="submit" class="btn btn-success mt-5">Enviar</button>
       </form>
-      <form action="/auth/facebook" method="POST">
-        <button type="submit" class="btn btn-primary mt-5">
-          Login con Facebook
-        </button>
-      </form>
-
-      <hr />
-      <a type="submit" class="btn btn-success mt-5" href="/signup"
-        >Ir a registrar</a
-      >
     </div>
+    
+  <script src="./login.js"></script>
   </body>
 </html>
