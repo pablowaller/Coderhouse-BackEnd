@@ -212,7 +212,7 @@ app.post(
   "/login",
   passport.authenticate("login", {
     failureRedirect: "/faillogin",
-    successRedirect: "/views/productos/vista",
+    successRedirect: "/views/vista",
   })
 );
 
@@ -222,7 +222,7 @@ app.get(
   "/auth/facebook/callback",
   passport.authenticate("facebook", {
     failureRedirect: "/faillogin",
-    successRedirect: "/views/productos/vista",
+    successRedirect: "/views/vista",
   })
 );
 app.get("/faillogin");
@@ -232,7 +232,7 @@ app.post(
   "/signup",
   passport.authenticate("signup", {
     failureRedirect: "/failsignup",
-    successRedirect: "/views/productos/vista",
+    successRedirect: "/views/vista",
   })
 );
 app.get("/failsignup");
