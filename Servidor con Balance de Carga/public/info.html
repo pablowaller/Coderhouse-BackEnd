@@ -1,0 +1,51 @@
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Vista de Productos</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+      integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l"
+      crossorigin="anonymous"
+    />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.js"></script>
+  </head>
+
+  <body>
+    <div id="info" class="w-50 m-auto"></div>
+
+    <script type="text/javascript">
+      const INFO = `
+                  <ul class="list-group mt-5">
+                    <li class="list-group-item">{{info.argv}}</li>
+                    <li class="list-group-item">{{info.so}}</li>
+                    <li class="list-group-item">{{info.version}}</li>
+                    <li class="list-group-item">{{info.memoryUsage}}</li>
+                    <li class="list-group-item">{{info.path}}</li>
+                    <li class="list-group-item">{{info.processId}}</li>
+                    <li class="list-group-item">{{info.folder}}</li>
+                    <li class="list-group-item">{{info.numberProcess}}</li>
+                  </ul>
+                  `;
+
+      fetch("/api/info", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((respuesta) => respuesta.json())
+        .then((info) => {
+          const template = Handlebars.compile(INFO);
+          document.getElementById("info").innerHTML = template({
+            info: info,
+          });
+        });
+    </script>
+  </body>
+</html>
