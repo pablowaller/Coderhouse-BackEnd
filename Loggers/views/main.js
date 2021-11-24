@@ -13,34 +13,22 @@ const MESSAGES_TEMPLATE = `{{#each messages}}
 {{/each}}
 `;
 
-const PROFILE = `
-<div class="profile d-flex">
-<img
-  style="width: 100px; margin-right: 10px"
-  src="{{user.photo}}"
-  alt="Imagen del usuario"
-  alt="Imágen del usuario"
-/>
-
-<div class="data">
-  <p>{{user.username}}</p>
-  {{#if user.email}}
-  <p>{{user.email}}</p>
-  {{/if}}
-</div>
+const WELCOME_ALERT = `
+<div class="alert alert-success" role="alert">
+  Bienvenido {{username}}
 </div>
 `;
 
-fetch("/getUser", {
+fetch("/getUserName", {
   headers: {
     "Content-Type": "application/json",
   },
 })
   .then((respuesta) => respuesta.json())
-  .then((user) => {
-    const template = Handlebars.compile(PROFILE);
-    document.getElementById("profile").innerHTML = template({
-      user: user,
+  .then((username) => {
+    const template = Handlebars.compile(WELCOME_ALERT);
+    document.getElementById("welcome").innerHTML = template({
+      username: username,
     });
   });
 
@@ -60,10 +48,10 @@ fetch("/mensajes/leer", {
     });
 
     console.log(document.getElementById("messagesContainer").innerHTML);
-  });
+  })
+  .catch((error) => console.error(error));
 
 const socket = io.connect();
-
 
 const formatearFecha = (f) =>
   `${f.getDate()}-${
@@ -79,7 +67,7 @@ document
       thumbnail: document.getElementById("thumbnail").value,
     };
 
-    fetch("/api/productos/guardar", {
+    fetch("/productos/guardar", {
       headers: {
         "Content-Type": "application/json",
       },
@@ -120,7 +108,7 @@ document
       message: document.getElementById("txtMessage").value,
     };
 
-    fetch("/api/mensajes/guardar", {
+    fetch("/mensajes/guardar", {
       headers: {
         "Content-Type": "application/json",
       },
