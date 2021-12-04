@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/agustinyuse/json_normalizr#readme",
   "dependencies": {
+    "cookie-parser": "^1.4.6",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-session": "^1.17.2",

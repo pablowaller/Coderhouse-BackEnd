@@ -28,7 +28,7 @@ router.get(
     });
   }
 );
-
+authenticate
 router.get("/logout", function (req, res, next) {
   req.logout();
   authController.sendLogoutEmail(req.federatedUser);
