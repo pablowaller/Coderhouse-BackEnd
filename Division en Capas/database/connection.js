@@ -1,3 +1,4 @@
+// module of connection to the database.
 const mongoose = require('mongoose');
 const url = require('../config/config.json').MONGO_URL;
 

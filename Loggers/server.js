@@ -2,8 +2,6 @@ const express = require("express");
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 
-require("./database/connection");
-
 const app = express();
 
 app.use(express.json());
@@ -23,7 +21,11 @@ app.use(
   })
 );
 
-require('dotenv').config({ path: 'ENV_FILENAME' });
+const dotenv = require("dotenv");
+
+require("./database/connection");
+
+dotenv.config();
 
 const loggerConsola = require('./lib/logger').loggerConsola;
 loggerConsola.info("Cheese is Comté.")
@@ -38,8 +40,8 @@ loggerArchivoErrores.info("Cheese is Comté.")
 loggerArchivoErrores.warn("Cheese is quite smelly.");
 loggerArchivoErrores.error("Cheese is too ripe!");
 
-const http = require("http").Server(app);
-var io = require("socket.io")(http);
+const server = require("http").Server(app);
+var io = require("socket.io")(server);
 
 app.set("io", io);
 
@@ -98,23 +100,6 @@ app.get("/logout", (req, res) => {
   });
 });
 
-app.get("/info");
-
-app.get("/info", (req, res) => {
-  const info = {
-    argv: `${process.argv[2]}`,
-    so: `${process.platform}`,
-    version: `${process.version}`,
-    memoryUsage: `${process.memoryUsage}`,
-    path: `${process.cwd()}`,
-    processId: `${process.pid}`,
-    folder: `${process.cwd()}`,
-    numberProcess: numCPUs,
-  };
-
-  res.json(info);
-});
-
 app.get("/getUserName", (req, res) => {
   res.json(req.session.username);
 });
@@ -131,13 +116,13 @@ io.on("connect", (socket) => {
 
 const PORT = 8080;
 
-controllersdb.conectarDB(process.env.MONGO_ATLAS, (err) => {
-  if (err) return loggerConsola.error("Error en conexión de base de datos", err);
-  loggerConsola.info("BASE DE DATOS CONECTADA");
-
-  http.listen(PORT, function (err) {
-    if (err) return loggerConsola.info("Error en el listen server", err);
-    loggerConsola.info(`Server running on ${PORT} ${process.pid}`);
-  });
+server.listen(process.env.PORT || PORT, () => {
+  loggerConsola.info(`Server running on http://localhost:${PORT}`);
 });
+
+server.on('error', error => {
+  loggerConsola.error('Error en el servidor:', error);
+});
+
+
 
