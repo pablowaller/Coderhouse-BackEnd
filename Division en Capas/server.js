@@ -71,8 +71,6 @@ app.use(
   })
 );
 
-require('./routes/auth.routes')(passport)
-
 app.use(passport.initialize());
 app.use(passport.session());
 
