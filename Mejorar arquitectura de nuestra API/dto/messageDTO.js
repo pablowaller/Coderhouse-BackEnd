@@ -2,7 +2,7 @@ class MessageDTO {
 
     constructor(messageData) {
         this.id = messageData._id;
-        this.text = messageData.text;
+        this.message = messageData.message;
         this.author = messageData.user;
         this.timestamp = messageData.timestamp;
     }
@@ -12,7 +12,7 @@ class MessageDTO {
     }
 
     getText() {
-        return this.text;
+        return this.message;
     }
 
     getAuthor() {
