@@ -4,11 +4,19 @@ const cookieParser = require('cookie-parser');
 var passport = require("passport");
 const app = express();
 
+const compression = require('compression');
+const helmet = require('helmet');
+
+
+
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cookieParser());
+
+app.use(compression());
+app.use(helmet());
 
 app.use(
   session({
