@@ -1,0 +1,7 @@
+# todos los productos
+{ products { price, timestamp, _id} }
+
+# producto por id
+mutation {productById(id:"1") {id, price, timestamp }}
+
+mutation {deleteProductById(id:"2") {id, price, timestamp }}

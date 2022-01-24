@@ -10,15 +10,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pablowaller/Coderhouse-BackEnd.git"
+    "url": "git+https://github.com/agustinyuse/json_normalizr.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/pablowaller/Coderhouse-BackEnd/issues"
+    "url": "https://github.com/agustinyuse/json_normalizr/issues"
   },
-  "homepage": "https://github.com/pablowaller/Coderhouse-BackEnd",
+  "homepage": "https://github.com/agustinyuse/json_normalizr#readme",
   "dependencies": {
     "cookie-parser": "^1.4.6",
     "cookie-session": "^1.4.0",
