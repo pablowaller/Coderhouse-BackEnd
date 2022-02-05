@@ -17,9 +17,9 @@ function ProductsList() {
         <h2 id="title">Productos:</h2>
 
         <ul>
-            {Products.map(item => (
+            {products.map(item => (
                 <li id="product" key={item._id}>
-                    <b>{item.title}</b>:&nbsp;<a>"{item.text}" escrito por {item.author}</a>
+                    <b>{item.title}</b>:&nbsp;"{item.text}" escrito por {item.author}
                 </li>
             ))}
         </ul>
